@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Filtered Movies</title>
+    <style type="text/css">
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f7fc;
+            color: #2c3e50;
+            width: 800px;
+            margin: auto;
+        }
+
+        h1, h2 {
+            color: #3498db;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        label {
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        ul {
+            padding: 0;
+            list-style: none;
+        }
+
+        li {
+            margin-bottom: 20px;
+            list-style-type: none;
+        }
+
+        input[type="number"] {
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #3498db;
+            border-radius: 4px;
+        }
+
+        input[type="submit"] {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .edit-product, .delete-product {
+            background-color: #2980b9;
+            color: #fff;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            margin-right: 5px;
+        }
+
+        .delete-product {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+<h1>Partial view with the filtered movies</h1>
+<div>
+    <form th:method="POST" th:action="@{/ticketOrder}">
+        <ul th:each="movie : ${searchResults}">
+            <li style="list-style-type: none">
+                <input type="radio" name="selectedMovie" th:value="${movie.getTitle()}">
+                <label th:for="'movie' + ${movie.getTitle()}" th:utext="'Title: ' + '<b><em>' + ${movie.getTitle()} + '</b></em>' + '<br>' + ' Summary: ' + ${movie.getSummary()} + '<br>' + ' Rating: '+ ${movie.getRating()} + '<br>' + 'Production: ' + ${movie.getProduction()}"></label>
+                <br>
+                <th:block>
+                    <a th:href="@{'/movies/edit/{id}' (id=${movie.getId()})}" class="btn btn-sm btn-info edit-product">
+                        <i class="fa fa-trash">Edit</i>
+                    </a>
+                </th:block>
+                <br><br>
+                <th:block>
+                    <a th:href="@{'/movies/delete/{id}' (id=${movie.getId()})}" class="btn btn-sm btn-info delete-product">
+                        <i class="fa fa-delete">Delete</i>
+                    </a>
+                </th:block>
+            </li>
+        </ul>
+
+        <h2>Choose number of tickets:</h2>
+        <input type="number" name="numTickets" min="1" max="10"><br/>
+        <br/>
+        <br>
+        <input type="submit" value="Submit">
+    </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,1 @@
+List all the ticket orders made, and implement action method "deleteTicket" for each ticket order.
