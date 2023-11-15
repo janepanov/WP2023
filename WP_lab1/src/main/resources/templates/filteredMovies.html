@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Filtered Movies</title>
+</head>
+<body>
+<h1>Partial view with the filtered movies</h1>
+<div>
+    <form th:method="POST" th:action="@{/}">
+        <ul th:each="movie : ${searchResults}">
+            <li style="list-style-type: none">
+                <input type="radio" name="selectedMovie" th:value="${movie.getTitle()}">
+                <label th:for="'movie' + ${movie.getTitle()}" th:utext="'Title: ' + '<b><em>' + ${movie.getTitle()} + '</b></em>' + '<br>' + ' Summary: ' + ${movie.getSummary()} + '<br>' + ' Rating: '+ ${movie.getRating()}"></label>
+            </li>
+        </ul>
+
+        <h2>Choose number of tickets:</h2>
+        <input type="number" name="numTickets" min="1" max="10"><br/>
+        <br/>
+        <div>
+            <p>Total tickets:</p>
+            <th:block>
+                <div th:text="${totalTickets}"></div>
+            </th:block>
+        </div>
+        <br>
+        <input type="submit" value="Submit">
+    </form>
+</div>
+</body>
+</html>

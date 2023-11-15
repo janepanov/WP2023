@@ -1,0 +1,98 @@
+<html>
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <meta charset="utf-8">
+    <title>Movie Ticket Order page - Welcome and choose a Movie</title>
+    <style type="text/css">
+        body {
+            width: 800px;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Welcome to our Movie Ticket Shop App</h1>
+</header>
+
+<div>
+    <h2>Search Movies:</h2>
+    <form action="/search" method="GET">
+        <input id="searchText" type="text" name="searchText" placeholder="Movie title or summary">
+        <small>Minimum rating</small>
+        <input id="searchRating" type="number" inputmode="decimal" step="0.1" name="searchRating" placeholder="Minimum rating" value="1">
+        <button id="searchButton" type="submit">Search</button>
+    </form>
+</div>
+
+<div id="searchResults">
+
+</div>
+
+<script>
+    $(document).ready(function() {
+
+        $("#searchButton").click(function() {
+            $("#listMovies").show();
+            $("#searchResults").hide();
+
+            var searchText = $("#searchText").val();
+            var searchRating = $("#searchRating").val();
+            var parsedRating = parseFloat(searchRating);
+
+            if(searchText !== " " && parsedRating !== 1){
+                $("#listMovies").hide();
+                $("#searchResults").show();
+
+            }
+
+            var requestData = {};
+
+            if (searchText) {
+                requestData.searchText = searchText;
+            }
+
+            if (searchRating) {
+                requestData.searchRating = searchRating;
+            }
+
+            $.get("/search", requestData, function(data) {
+                $("#searchResults").html(data);
+            });
+        });
+    });
+</script>
+
+<div id="listMovies">
+<main>
+    <h2>Choose movie:</h2>
+    <!-- Display radio buttons for each movie,
+            the value should be the movie title
+            and the displayed text should be Title: <movie_title>, Summary:<movie_summary>, Rating: <movie_rating> -->
+    <div>
+        <form th:method="POST" th:action="@{/}">
+            <ul th:each="movie : ${movies}">
+                <li style="list-style-type: none">
+                    <input type="radio" name="selectedMovie" th:value="${movie.getTitle()}">
+                    <label th:for="'movie' + ${movie.getTitle()}" th:utext="'Title: ' + '<b><em>' + ${movie.getTitle()} + '</b></em>' + '<br>' + ' Summary: ' + ${movie.getSummary()} + '<br>' + ' Rating: '+ ${movie.getRating()}"></label>
+                </li>
+            </ul>
+
+            <h2>Choose number of tickets:</h2>
+            <input type="number" name="numTickets" min="1" max="10"><br/>
+            <br/>
+            <div>
+                <p>Total tickets:</p>
+                <th:block>
+                    <div th:text="${totalTickets}"></div>
+                </th:block>
+            </div>
+            <br>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+
+</main>
+</div>
+</body>
+</html>

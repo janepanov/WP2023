@@ -1,0 +1,1 @@
+Add a global variable "totalTickets" that will display the total number of tickets purchased.
