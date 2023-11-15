@@ -1,2 +1,2 @@
 # WP2023
-Web Programming - Laboratory exercises
+ Solutions to the laboratory exercises for the course Web Programming 2023/24
