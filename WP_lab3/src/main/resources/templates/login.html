@@ -1,0 +1,103 @@
+<div class="container" xmlns:th="http://www.thymeleaf.org">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ecf0f1;
+            color: #2c3e50;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            background-color: #ecf0f1;
+            border-radius: 8px;
+            padding: 20px; /* Adjusted padding for consistency */
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .form-signin {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #ecf0f1;
+            padding: 20px; /* Adjusted padding for consistency */
+            border-radius: 8px;
+            margin-top: 5%;
+        }
+
+        .form-signin-heading {
+            color: #3498db;
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #3498db;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        #submit {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        #submit:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-light {
+            background-color: #ecf0f1;
+            color: #3498db;
+            border: 1px solid #3498db;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            padding: 10px;
+        }
+
+        .btn-light:hover {
+            background-color: #3498db;
+            color: #fff;
+        }
+
+        .text-danger {
+            color: #c0392b;
+        }
+    </style>
+
+    <form class="form-signin mt-xl-5" method="post" action="/login">
+        <h2 class="form-signin-heading" style="color: #3498db;">Sign in</h2>
+        <p>
+            <label for="username" class="sr-only">Username</label>
+            <input type="text" id="username" name="username" class="form-control" placeholder="Username" required=""
+                   autofocus="" style="margin-bottom: 10px;">
+        </p>
+        <p>
+            <label for="password" class="sr-only">Password</label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Password"
+                   required="" style="margin-bottom: 10px;">
+        </p>
+
+        <th:block th:if="${hasError}">
+            <div th:text="${error}" class="text-danger" style="margin-bottom: 10px;"></div>
+        </th:block>
+
+        <div class="row">
+            <div class="col-md-3">
+                <button id="submit" class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+            </div>
+            <div class="col-md-3">
+                <a href="/register" class="btn btn-lg btn-block btn-light">Register here</a>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <meta charset="utf-8">
+    <title>Movie Ticket Order page - Welcome and choose a Movie</title>
+    <style type="text/css">
+        body {
+            width: 800px;
+            margin: auto;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f7fc;
+            color: #2c3e50;
+        }
+
+        header {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+
+        h1, h2 {
+            color: #3498db;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        input[type="text"], input[type="number"] {
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid #3498db;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: #fff;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button a {
+            text-decoration: none;
+            color: #fff;
+        }
+
+        #searchResults {
+            display: none;
+        }
+
+        #listMovies {
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        ul {
+            padding: 0;
+            list-style: none;
+        }
+
+        li {
+            margin-bottom: 20px;
+        }
+
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        label {
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        main {
+            background-color: #f0f7fc;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        input[type="number"] {
+            width: 50px;
+        }
+
+        input[type="submit"] {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .edit-product, .delete-product {
+            background-color: #2980b9;
+            color: #fff;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            margin-right: 5px;
+        }
+
+        .delete-product {
+            background-color: #c0392b;
+        }
+
+        #orderedTickets {
+            background-color: #3498db;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            color: #fff;
+        }
+
+        #orderedTickets li {
+            border: 2px solid white;
+            margin-bottom: 20px;
+            padding: 10px;
+        }
+
+        #orderedTickets a {
+            background-color: #2980b9;
+            color: #fff;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            margin-right: 5px;
+        }
+
+        #orderedTickets a:hover {
+            background-color: #1f6692;
+        }
+
+        #orderedTickets a.delete-product {
+            background-color: #c0392b;
+        }
+
+        #orderedTickets a.delete-product:hover {
+            background-color: #962d22;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1 style="color: white;">Welcome to our Movie Ticket Shop App</h1>
+</header>
+
+<div>
+    <h2>Search Movies:</h2>
+    <form action="/servlet/search" method="GET">
+        <input id="searchText" type="text" name="searchText" placeholder="Movie title or summary">
+        <small>Minimum rating</small>
+        <input id="searchRating" type="number" inputmode="decimal" step="0.1" name="searchRating" placeholder="Minimum rating" value="1">
+        <button id="searchButton" type="submit">Search</button>
+    </form>
+</div>
+
+<div>
+    <h2>Create Movie:</h2>
+    <button>
+        <a th:href="@{'/movies/add'}"
+           class="btn btn-sm btn-info edit-movie">
+            <i class="fa fa-trash">Add Movie</i>
+        </a>
+    </button>
+</div>
+
+<div id="searchResults"></div>
+
+<script>
+    $(document).ready(function() {
+        $("#searchButton").click(function() {
+            $("#listMovies").show();
+            $("#searchResults").hide();
+
+            var searchText = $("#searchText").val();
+            var searchRating = $("#searchRating").val();
+            var parsedRating = parseFloat(searchRating);
+
+            if(searchText !== " " && parsedRating !== 1){
+                $("#listMovies").hide();
+                $("#searchResults").show();
+            }
+
+            var requestData = {};
+
+            if (searchText) {
+                requestData.searchText = searchText;
+            }
+
+            if (searchRating) {
+                requestData.searchRating = searchRating;
+            }
+
+            $.get("/search", requestData, function(data) {
+                $("#searchResults").html(data);
+            });
+        });
+    });
+</script>
+
+<div id="listMovies">
+    <main>
+        <h2>Choose movie:</h2>
+        <div>
+            <form th:method="POST" th:action="@{/ticketOrder}">
+                <ul th:each="movie : ${movies}">
+                    <li style="list-style-type: none">
+                        <input type="radio" name="selectedMovie" th:value="${movie.getTitle()}">
+                        <label th:for="'movie' + ${movie.getTitle()}" th:utext="'Title: ' + '<b><em>' + ${movie.getTitle()} + '</b></em>' + '<br>' + ' Summary: ' + ${movie.getSummary()} + '<br>' + ' Rating: '+ ${movie.getRating()} + '<br>' + 'Production: ' + ${movie.getProduction().getName()}"></label>
+                        <br>
+                        <th:block>
+                            <a th:href="@{'/movies/edit/{id}' (id=${movie.getId()})}"
+                               class="btn btn-sm btn-info edit-product">
+                                <i class="fa fa-trash">Edit</i>
+                            </a>
+                        </th:block>
+                        <br><br>
+                        <th:block>
+                            <a th:href="@{'/movies/delete/{id}' (id=${movie.getId()})}" class="btn btn-sm btn-info delete-product">
+                                <i class="fa fa-delete">Delete</i>
+                            </a>
+                        </th:block>
+                    </li>
+                </ul>
+
+                <h2>Choose number of tickets:</h2>
+                <input type="number" name="numTickets" min="1" max="10"><br/>
+                <br/>
+                <input type="datetime-local" name="localDateTime"/><br/>
+                <br/>
+                <div>
+                    <p>Total tickets:</p>
+                    <th:block>
+                        <div th:text="${totalTickets}"></div>
+                    </th:block>
+                </div>
+                <br>
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+    </main>
+</div>
+
+<div>
+    <form th:method="get" th:action="@{/ticketOrder/filterByDates}">
+        <h2>Filter for Movies Orders by date span:</h2>
+        <input type="datetime-local" name="startDate" placeholder="Choose Start Date">
+        <input type="datetime-local" name="endDate" placeholder="Choose End Date">
+        <button type="submit">Filter</button>
+    </form>
+</div>
+
+<div id="orderedTickets">
+    <h2 style="color: white;">List of ordered tickets</h2>
+    <ul th:each="ticket : ${tickets}">
+        <li>
+            <div th:utext="'<b><em>Order Id:</b></em> ' + ${ticket.getId()}"></div>
+            <div th:utext="'<b>Movie title:</b> ' + ${ticket.getMovieTitle()}"></div>
+            <div th:utext="'<b>Number of tickets:</b> ' + ${ticket.getNumberOfTickets()}"></div>
+            <div th:utext="'<b>Date:</b> ' + ${ticket.getDateCreated()}"></div>
+            <br>
+            <th:block>
+                <a th:href="@{'/ticketOrder/delete/{id}' (id=${ticket.getId()})}" class="btn btn-sm btn-info delete-product">
+                    <i class="fa fa-delete">Delete</i>
+                </a>
+            </th:block>
+        </li>
+    </ul>
+</div>
+
+</body>
+</html>
